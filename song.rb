@@ -1,0 +1,23 @@
+require 'dm-core'
+require 'dm-migrations'
+
+configure do
+  DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/development.db")
+end
+class Song
+  include DataMapper::Resource
+  property :id, Serial
+  property :title, String
+  property :lyrics, Text
+  property :length, Integer
+  property :released_on, Date
+end
+DataMapper.finalize
+get '/songs' do
+  @songs = Song.all
+  slim :songs
+end
+get '/songs/:id' do
+  @song = Song.get(params[:id])
+  slim :show_song
+end
